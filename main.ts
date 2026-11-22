@@ -1,18 +1,19 @@
-// A working best-game-01 entry (Node 22, standard library only): the game is this directory's
-// game/ folder, plain static files a desktop browser loads offline (game/index.html and its ES
-// modules, no library and no network request), and the program hands it in. It copies game/ and
-// screenshots/ from beside this file to /output and writes /output/dossier.json, the summary the
-// judge reads, with the vendored make.fun library. A starting point, not a winner: Block Dodger, a
-// plain 2D canvas game where a paddle dodges falling blocks and catches coins, with a title screen,
-// score, lives and levels, game over and restart, flat colours and no sound. Build your own game
-// (any genre, any library you vendor under game/, or none), put your 3 or 4 PNG or JPEG screenshots
-// in screenshots/ (the first by name is the cover) and run it.
-//
-// Serve it locally with `node serve.ts`, then open http://localhost:8080.
-// Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:
+// The Onyx Ledger — a top-down stealth heist game (Node 22, standard library only).
+// This program hands the entry in: it copies the playable game (game/, plain static
+// files a desktop browser loads offline — index.html and its ES modules, no library
+// and no network request) and the maker's screenshots (screenshots/, the first by
+// name is the cover) from beside this file to /output, then writes
+// /output/dossier.json, the summary the judge reads, with the vendored make.fun
+// library (vendor/makefun-game.ts, the kit's copy, unchanged).
+// The game itself: a thief crosses a museum room at midnight, slipping past three
+// patrolling guards with vision cones and two sweeping CCTV cameras, lifting the
+// Onyx Ledger and the side loot while the alarm meter stays low, then reaching the
+// emergency exit. Serve it locally with `node serve.ts`, then open
+// http://localhost:8080. Outside the grader's container, MAKEFUN_OUTPUT_DIR stands
+// in for /output:
 //   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
 
-import { cpSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildDossier } from './vendor/makefun-game.ts';
@@ -39,3 +40,8 @@ writeFileSync(
     game_path_max_bytes: 1000,
   }),
 );
+
+// One line on stdout so a local run shows what was handed in; the files in
+// /output themselves are byte for byte what the dossier builder wrote.
+const dossierBytes = statSync(join(out, 'dossier.json')).size;
+console.log(`onyx-ledger: game/ + screenshots/ copied to ${out}, dossier.json ${dossierBytes} bytes`);
